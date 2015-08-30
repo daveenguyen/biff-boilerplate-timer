@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 import App from './App';
 import React from 'react';
