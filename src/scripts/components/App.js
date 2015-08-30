@@ -9,47 +9,6 @@ import TimeStore from '../stores/TimeStore';
 
 import InputListener from './utils/InputListener'
 
-const ReactTransitionGroup = React.addons.TransitionGroup;
-
-// require('../../styles/normalize.css');
-// require('bootstrap/dist/css/bootstrap.min.css');
-// require('fontawesome/css/font-awesome.css');
-// require('../../styles/main.scss');
-
-function calcTime(start, end) {
-  var time = '0'
-
-  if (end === 0) {
-    end = Date.now();
-    if (start === 0) {
-      start = end;
-    }
-  }
-
-  var ms = end-start;
-  var min = Math.floor(ms / 60000);
-  var sec = Math.floor((ms % 60000) / 1000);
-  ms = Math.floor(ms % 1000);
-
-  if (sec < 10) {
-    sec = '0' + sec.toString();
-  }
-
-  if (ms < 10) {
-    ms = '00' + ms.toString();
-  } else if (ms < 100) {
-    ms = '0' + ms.toString();
-  }
-
-  if (min > 0) {
-    time = min.toString() + ':' + sec + '.' + ms;
-  } else {
-    time = sec + '.' + ms;
-  }
-
-  return time;
-}
-
 var styles = {
   app: {
     width: '100%',
@@ -60,6 +19,7 @@ var styles = {
     transform: 'translateY(-50%)'
   },
   base: {
+    userSelect: 'none',
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     fontWeight: 300,
     lineHeight: 1,
@@ -83,14 +43,14 @@ class App extends React.Component {
   componentWillMount() {
     window.addEventListener('keydown', InputListener.handleKeyDown);
     window.addEventListener('keyup', InputListener.handleKeyUp);
-    window.addEventListener('mousedown', InputListener.handleMouseDown);
-    window.addEventListener('mouseup', InputListener.handleMouseUp);
+    window.addEventListener('touchstart', InputListener.handleMouseDown);
+    window.addEventListener('touchend', InputListener.handleMouseUp);
   }
   render() {
     return (
       <div style={[styles.base, styles.app]}>
         <div id="scramble" style={[styles.base, styles.scramble]}>{this.props.scramble}</div>
-        <div id="time" style={[styles.base, styles.time]}>{calcTime(this.props.time.start, this.props.time.end)}</div>
+        <div id="time" style={[styles.base, styles.time]}>{((this.props.time.end-this.props.time.start) / 1e3).toFixed(3)}</div>
       </div>
     )
   }

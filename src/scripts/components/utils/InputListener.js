@@ -8,7 +8,7 @@ function newSolve() {
 
 function startSolve() {
   TimerActions.startSolve(Date.now());
-  Ticker = setInterval(TimerActions.tick, 100);
+  Ticker = setInterval(TimerActions.tick, 50);
 }
 
 function endSolve() {

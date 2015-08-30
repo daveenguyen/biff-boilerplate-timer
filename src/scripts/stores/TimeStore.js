@@ -22,6 +22,7 @@ const TimeStore = biff.createStore({
     case 'START_SOLVE': {
       TimeStore._setPending(true);
       solve.start = payload.body;
+      solve.end = payload.body;
       TimeStore.emitChange();
       break;
     }
