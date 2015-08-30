@@ -1,4 +1,4 @@
-var TimerActions = require('../actions/TimerActions');
+var TimerActions = require('../../actions/TimerActions');
 var _count = 0;
 var Ticker;
 

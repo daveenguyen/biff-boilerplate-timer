@@ -2,7 +2,7 @@
 
 import biff from '../dispatcher/dispatcher';
 import Immutable from 'immutable';
-import scrambleGenerator from '../components/ScrambleGenerator'
+import scrambleGenerator from '../components/utils/ScrambleGenerator'
 
 let scramble = scrambleGenerator();
 

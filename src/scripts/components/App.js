@@ -4,24 +4,17 @@ import React from 'react/addons';
 import radium from 'radium';
 
 import Flux from '../dispatcher/dispatcher';
-import TodoStore from '../stores/TodoStore';
 import ScrambleStore from '../stores/ScrambleStore';
 import TimeStore from '../stores/TimeStore';
 
-import ErrorMessage from './todos/ErrorMessage';
-import TodoList from './todos/TodoList';
-import TodoForm from './todos/TodoForm';
-
-import InputListener from './InputListener'
-
-import Immutable from 'immutable';
+import InputListener from './utils/InputListener'
 
 const ReactTransitionGroup = React.addons.TransitionGroup;
 
-require('../../styles/normalize.css');
-require('bootstrap/dist/css/bootstrap.min.css');
-require('fontawesome/css/font-awesome.css');
-require('../../styles/main.scss');
+// require('../../styles/normalize.css');
+// require('bootstrap/dist/css/bootstrap.min.css');
+// require('fontawesome/css/font-awesome.css');
+// require('../../styles/main.scss');
 
 function calcTime(start, end) {
   var time = '0'
@@ -105,22 +98,12 @@ class App extends React.Component {
 
 App.propTypes = {
   scramble: React.PropTypes.string,
-  time: React.PropTypes.object,
-  todos: React.PropTypes.object,
-  pending: React.PropTypes.bool,
-  errors: React.PropTypes.array
+  time: React.PropTypes.object
 };
 
-App.defaultProps = {
-  todos: new Immutable.List()
-};
-
-let FluxApp = Flux.connect(radium(App), [TodoStore, ScrambleStore, TimeStore], props => ({
+let FluxApp = Flux.connect(radium(App), [ScrambleStore, TimeStore], props => ({
   scramble: ScrambleStore.getScramble(),
-  time: TimeStore.getTime(),
-  todos: TodoStore.getTodos(),
-  pending: TodoStore.getPending(),
-  errors: TodoStore.getErrors()
+  time: TimeStore.getTime()
 }));
 
 export default FluxApp;
