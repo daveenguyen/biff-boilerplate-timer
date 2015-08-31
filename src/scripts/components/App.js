@@ -4,11 +4,14 @@ import React from 'react/addons';
 import radium from 'radium';
 
 import Flux from '../dispatcher/dispatcher';
+
 import ScrambleStore from '../stores/ScrambleStore';
 import TimeStore from '../stores/TimeStore';
 import SolveStore from '../stores/SolveStore';
 
-import InputListener from './utils/InputListener'
+import SessionStats from './dvTimer/SessionStats';
+
+import InputListener from './utils/InputListener';
 
 var styles = {
   app: {
@@ -37,6 +40,10 @@ var styles = {
   time: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     fontSize: '24vw'
+  },
+  stats: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontSize: '6vw'
   }
 }
 
@@ -64,6 +71,7 @@ class App extends React.Component {
       <div style={[styles.base, styles.app]}>
         <div id="scramble" style={[styles.base, styles.scramble]}>{this.props.scramble}</div>
         <div id="time" style={[styles.base, styles.time]}>{((this.props.time.end-this.props.time.start) / 1e3).toFixed(3)}</div>
+        <SessionStats solves={this.props.solves} />
       </div>
     )
   }
