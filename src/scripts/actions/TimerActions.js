@@ -3,26 +3,33 @@
 import biff from '../dispatcher/dispatcher';
 
 const TimerActions = biff.createActions({
+  startInspection(data) {
+    this.dispatch({
+      actionType: 'START_INSPECTION',
+      data: data
+    });
+  },
   newSolve() {
     this.dispatch({
       actionType: 'NEW_SOLVE'
     });
   },
-  startSolve(time) {
+  startSolve(data) {
     this.dispatch({
       actionType: 'START_SOLVE',
-      body: time
+      data: data
     });
   },
-  endSolve(time) {
+  endSolve(data) {
     this.dispatch({
       actionType: 'END_SOLVE',
-      body: time
+      data: data
     });
   },
-  tick() {
+  tick(data) {
     this.dispatch({
-      actionType: 'TICK'
+      actionType: 'TICK',
+      data: data
     });
   },
   addTodo(todo) {

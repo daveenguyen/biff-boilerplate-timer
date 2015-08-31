@@ -1,80 +1,87 @@
-var TimerActions = require('../../actions/TimerActions');
-var _count = 0;
-var Ticker;
+import TimerActions from '../../actions/TimerActions';
+
+let _count = 0;
+let _disableDelay = 250;
+let _disabled = false;
+let _ticker;
+
+function startInspection() {
+  TimerActions.startInspection();
+  _ticker = setInterval(TimerActions.tick, 50);
+}
 
 function newSolve() {
   TimerActions.newSolve();
 }
 
-function startSolve() {
-  TimerActions.startSolve(Date.now());
-  Ticker = setInterval(TimerActions.tick, 50);
+function startSolve(data) {
+  TimerActions.startSolve(data);
+  _ticker = setInterval(TimerActions.tick, 50);
 }
 
-function endSolve() {
-  TimerActions.endSolve(Date.now());
-  clearInterval(Ticker);
+function endSolve(data) {
+  TimerActions.endSolve(data);
+  clearInterval(_ticker);
 }
 
-var InputListener = {
-  handleMouseUp: function(e) {
+function disableTimer() {
+  _disabled = true;
+  setTimeout(function() {
+    _disabled = false;
+  }, _disableDelay);
+}
+
+function handleUp(e, data) {
+  if (!_disabled) {
     switch (_count % 4) {
       case 1:
-        startSolve();
+        startSolve(data);
         _count++;
         break;
       case 3:
+        disableTimer();
         _count++;
         break;
       default:
         break;
     }
-  },
-  handleMouseDown: function(e) {
+  }
+}
+
+function handleDown(e, data) {
+  if (!_disabled) {
     switch (_count % 4) {
       case 0:
-        newSolve();
+        newSolve(data);
         _count++;
         break;
       case 2:
-        endSolve();
+        endSolve(data);
         _count++;
         break;
       default:
         break;
     }
-  },
-    handleKeyUp: function(e) {
-      if (e.keyCode === 32) {
-        switch (_count % 4) {
-          case 1:
-            startSolve();
-            _count++;
-            break;
-          case 3:
-            _count++;
-            break;
-          default:
-            break;
-        }
-      }
-    },
-    handleKeyDown: function(e) {
-      if (e.keyCode === 32) {
-        switch (_count % 4) {
-          case 0:
-            newSolve();
-            _count++;
-            break;
-          case 2:
-            endSolve();
-            _count++;
-            break;
-          default:
-            break;
-        }
-      }
-    }
-};
+  }
+}
 
-module.exports = InputListener;
+var InputListener = {
+  handleTouchEnd(e, data) {
+    handleUp(e, data);
+  },
+  handleTouchStart(e, data) {
+    handleDown(e, data);
+  },
+  handleKeyUp(e, data) {
+    if (e.keyCode === 32) {
+      handleUp(e, data);
+    }
+  },
+  handleKeyDown(e, data) {
+    if (e.keyCode === 32) {
+      handleDown(e, data);
+    }
+  }
+}
+
+export default InputListener;

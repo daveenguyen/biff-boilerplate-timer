@@ -6,6 +6,7 @@ import radium from 'radium';
 import Flux from '../dispatcher/dispatcher';
 import ScrambleStore from '../stores/ScrambleStore';
 import TimeStore from '../stores/TimeStore';
+import SolveStore from '../stores/SolveStore';
 
 import InputListener from './utils/InputListener'
 
@@ -39,12 +40,24 @@ var styles = {
   }
 }
 
+function wrapData(f) {
+  return function(e) {
+    let data = {
+      time: Date.now(),
+      scramble: ScrambleStore.getScramble(),
+      solveTime: TimeStore.getTime()
+    }
+
+    f(e, data);
+  };
+}
+
 class App extends React.Component {
   componentWillMount() {
-    window.addEventListener('keydown', InputListener.handleKeyDown);
-    window.addEventListener('keyup', InputListener.handleKeyUp);
-    window.addEventListener('touchstart', InputListener.handleMouseDown);
-    window.addEventListener('touchend', InputListener.handleMouseUp);
+    window.addEventListener('keydown', wrapData(InputListener.handleKeyDown));
+    window.addEventListener('keyup', wrapData(InputListener.handleKeyUp));
+    window.addEventListener('touchstart', wrapData(InputListener.handleTouchStart));
+    window.addEventListener('touchend', wrapData(InputListener.handleTouchEnd));
   }
   render() {
     return (
@@ -61,9 +74,10 @@ App.propTypes = {
   time: React.PropTypes.object
 };
 
-let FluxApp = Flux.connect(radium(App), [ScrambleStore, TimeStore], props => ({
+let FluxApp = Flux.connect(radium(App), [ScrambleStore, TimeStore, SolveStore], props => ({
   scramble: ScrambleStore.getScramble(),
-  time: TimeStore.getTime()
+  time: TimeStore.getTime(),
+  solves: SolveStore.getSolves()
 }));
 
 export default FluxApp;
