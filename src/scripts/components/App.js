@@ -10,6 +10,7 @@ import TimeStore from '../stores/TimeStore';
 import SolveStore from '../stores/SolveStore';
 
 import SessionStats from './dvTimer/SessionStats';
+import CubeViewer from './dvTimer/CubeViewer';
 
 import InputListener from './utils/InputListener';
 
@@ -71,7 +72,8 @@ class App extends React.Component {
       <div style={[styles.base, styles.app]}>
         <div id="scramble" style={[styles.base, styles.scramble]}>{this.props.scramble}</div>
         <div id="time" style={[styles.base, styles.time]}>{((this.props.time.end-this.props.time.start) / 1e3).toFixed(3)}</div>
-        <SessionStats solves={this.props.solves} />
+        <SessionStats styles={[styles.base, styles.stats]} solves={this.props.solves} />
+        <CubeViewer scramble={this.props.scramble} />
       </div>
     )
   }
@@ -79,7 +81,8 @@ class App extends React.Component {
 
 App.propTypes = {
   scramble: React.PropTypes.string,
-  time: React.PropTypes.object
+  time: React.PropTypes.object,
+  solves: React.PropTypes.object
 };
 
 let FluxApp = Flux.connect(radium(App), [ScrambleStore, TimeStore, SolveStore], props => ({

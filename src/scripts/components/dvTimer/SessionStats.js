@@ -1,8 +1,10 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
 
 let avg = 0;
+let avg5 = NaN;
+let avg12 = NaN;
 
 var styles = {
   base: {
@@ -25,6 +27,23 @@ function sortSolve(a, b) {
   return a > b ? 1 : b > a ? -1 : 0;
 }
 
+function calcAverage(solves) {
+  let data = solves.sort(sortSolve);
+  let sum = 0;
+  let best = calcTime(data.first()) / 1e3;
+  let worst = calcTime(data.last()) / 1e3;
+  let avg;
+  data = data.slice(1, -1);
+
+  solves.map(x => sum += calcTime(x));
+
+  avg = (sum / data.size / 1e3).toFixed(3);
+
+  console.log('average of', solves.size, 'best:', best, 'worst:', worst, 'avg:', avg)
+
+  return avg;
+}
+
 class SessionStats extends React.Component {
   componentWillUpdate(nextProps, nextState) {
     let solves = nextProps.solves;
@@ -32,29 +51,24 @@ class SessionStats extends React.Component {
     if (solves.size >= 3) {
       let sum = 0;
 
-      solves = solves.sort(sortSolve);
+      avg = calcAverage(solves);
 
-      let best = calcTime(solves.first());
-      let worst = calcTime(solves.last());
+      if (solves.size >= 5) {
+        avg5 = calcAverage(solves.slice(-5));
+      }
 
-      solves = solves.delete(0).pop();
-
-      solves.map(function(x) {
-        sum += calcTime(x);
-      });
-
-      avg = (sum / solves.size / 1e3).toFixed(3);
-
-      console.log('sum:', sum / 1e3);
-      console.log('avg:', avg);
-      console.log('best', best / 1e3);
-      console.log('worst', worst / 1e3);
+      if (solves.size >= 12) {
+        avg12 = calcAverage(solves.slice(-12));
+      }
     }
   }
+
   render() {
     return (
       <div style={styles.base}>
         <span><br/>Average: {avg}</span>
+        <span><br/>Average of 5: {avg5}</span>
+        <span><br/>Average of 12: {avg12}</span>
         {/*this.props.solves.map(x => (<span key={x.start}> {((x.end - x.start) / 1e3).toFixed(3)} </span>))*/}
       </div>
     );
