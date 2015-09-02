@@ -68,8 +68,8 @@ class SessionStats extends React.Component {
       <div style={styles.base}>
         <span><br/>Average: {avg}</span>
         <span><br/>Average of 5: {avg5}</span>
-        <span><br/>Average of 12: {avg12}</span>
-        {/*this.props.solves.map(x => (<span key={x.start}> {((x.end - x.start) / 1e3).toFixed(3)} </span>))*/}
+        <span><br/>Average of 12: {avg12}<br/></span>
+        {this.props.solves.map(x => (<span key={x.start}> {((x.end - x.start) / 1e3).toFixed(3)} </span>))}
       </div>
     );
   }

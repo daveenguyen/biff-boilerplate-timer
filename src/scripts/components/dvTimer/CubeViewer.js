@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import math from 'mathjs';
 
 var styles = {
   base: {
@@ -10,88 +11,96 @@ var styles = {
   }
 }
 
+
+function printMatrix(value) {
+  let precision = 14;
+  let str = math.format(value, precision);
+  let color = [];
+  color.push('b'); // B
+  color.push('o'); // L
+  color.push('w'); // U
+  color.push('r'); // R
+  color.push('g'); // F
+  color.push('y'); // D
+  for (var i = 0; i < color.length; i++) {
+    let re = new RegExp(i.toString(), 'g');
+    str = str.replace(re, color[i]);
+  }
+  str = str.replace(/],/g, '],\n');
+
+  console.log(str);
+}
+
+class MathHelper {
+  /**
+  * Retrieve a column from a matrix
+  * @param {Matrix | Array} matrix
+  * @param {number} index    Zero based column index
+  * @return {Matrix | Array} Returns the column as a vector
+  */
+  static col(matrix, index) {
+    var rows = math.size(matrix).valueOf()[0];
+    return math.flatten(math.subset(matrix, math.index(math.range(0, rows), index)));
+  }
+
+  /**
+  * Retrieve a row from a matrix
+  * @param {Matrix | Array} matrix
+  * @param {number} index    Zero based row index
+  * @return {Matrix | Array} Returns the row as a vector
+  */
+  static row(matrix, index) {
+    var cols = math.size(matrix).valueOf()[1];
+    return math.flatten(math.subset(matrix, math.index(index, math.range(0, cols))));
+  }
+
+
+  static flipVector(vector) {
+    let res = math.matrix([vector,vector]); // hacky
+    let size = math.size(res).valueOf()[1];
+    let range = math.range(size - 1, 0, -1, true);
+
+    return math.flatten(math.subset(res, math.index(0, range)));
+  }
+}
+
+
 class Face {
   constructor(name) {
-    this.rows = []
-    let temp = [];
-    temp.push(name);
-    temp.push(name);
-    temp.push(name);
-
-    this.rows.push(temp);
-    this.rows.push(temp);
-    this.rows.push(temp);
-
-    // this.rows.map(row => console.log(row));
+    this.data = math.multiply(math.ones(3, 3), name);
+    // this.data = math.matrix([[0, 1, 2], [3, 4, 5], [6, 7, 8]]);
   }
 
   getRow(num) {
-    let row = []
-    row.push(this.rows[num][0]);
-    row.push(this.rows[num][1]);
-    row.push(this.rows[num][2]);
-
-    return row;
-  }
-
-  getCol(num) {
-    let col = []
-    col.push(this.rows[0][num]);
-    col.push(this.rows[1][num]);
-    col.push(this.rows[2][num]);
-
-    return col;
+    return MathHelper.row(this.data, num);
   }
 
   setRow(num, data) {
-    let newR0 = this.getRow(0);
-    let newR1 = this.getRow(1);
-    let newR2 = this.getRow(2);
+    let cols = math.size(this.data).valueOf()[1];
+    let index = math.index(num, math.range(0, cols));
 
-    this.rows = [];
-    this.rows.push((num === 0) ? data : newR0);
-    this.rows.push((num === 1) ? data : newR1);
-    this.rows.push((num === 2) ? data : newR2);
+    this.data.subset(index, data);
+  }
 
-    // this.rows.map(row => console.log(row));
+  getCol(num) {
+    return MathHelper.col(this.data, num);
   }
 
   setCol(num, data) {
-    let newR0 = this.getRow(0);
-    let newR1 = this.getRow(1);
-    let newR2 = this.getRow(2);
+    let rows = math.size(this.data).valueOf()[0];
+    let index = math.index(math.range(0, rows), num);
 
-    newR0[num] = data[0];
-    newR1[num] = data[1];
-    newR2[num] = data[2];
-
-    this.rows = [];
-    this.rows.push(newR0);
-    this.rows.push(newR1);
-    this.rows.push(newR2);
+    this.data.subset(index, data);
   }
 
   rotateCW() {
-    let newR0 = [];
-    let newR1 = [];
-    let newR2 = [];
+    let newC0 = this.getRow(0);
+    let newC1 = this.getRow(1);
+    let newC2 = this.getRow(2);
 
-    newR0.push(this.getCol(0)[2]);
-    newR0.push(this.getCol(0)[1]);
-    newR0.push(this.getCol(0)[0]);
-
-    newR1.push(this.getCol(1)[2]);
-    newR1.push(this.getCol(1)[1]);
-    newR1.push(this.getCol(1)[0]);
-
-    newR2.push(this.getCol(2)[2]);
-    newR2.push(this.getCol(2)[1]);
-    newR2.push(this.getCol(2)[0]);
-
-    this.rows = [];
-    this.rows.push(newR0);
-    this.rows.push(newR1);
-    this.rows.push(newR2);
+    this.setCol(0, newC2);
+    this.setCol(1, newC1);
+    this.setCol(2, newC0);
   }
 }
 
@@ -110,12 +119,12 @@ class Cube {
     color.push('y'); // D
 
     this.faces = [];
-    this.faces.push(new Face(color[0]));
-    this.faces.push(new Face(color[1]));
-    this.faces.push(new Face(color[2]));
-    this.faces.push(new Face(color[3]));
-    this.faces.push(new Face(color[4]));
-    this.faces.push(new Face(color[5]));
+    this.faces.push(new Face(0));
+    this.faces.push(new Face(1));
+    this.faces.push(new Face(2));
+    this.faces.push(new Face(3));
+    this.faces.push(new Face(4));
+    this.faces.push(new Face(5));
   }
 
   turnR() {
@@ -141,9 +150,9 @@ class Cube {
     temp.push(this.faces[1].getCol(2));
 
     this.faces[3].setCol(0, temp[0]);
-    this.faces[4].setRow(0, temp[1].reverse());
+    this.faces[4].setRow(0, MathHelper.flipVector(temp[1]));
     this.faces[1].setCol(2, temp[2]);
-    this.faces[0].setRow(2, temp[3].reverse());
+    this.faces[0].setRow(2, MathHelper.flipVector(temp[3]));
 
     this.faces[2].rotateCW();
   }
@@ -157,8 +166,8 @@ class Cube {
 
     this.faces[2].setRow(2, temp[0]);
     this.faces[3].setRow(2, temp[1]);
-    this.faces[5].setRow(0, temp[2].reverse());
-    this.faces[1].setRow(2, temp[3].reverse());
+    this.faces[5].setRow(0, MathHelper.flipVector(temp[2]));
+    this.faces[1].setRow(2, MathHelper.flipVector(temp[3]));
 
     this.faces[4].rotateCW();
   }
@@ -170,9 +179,9 @@ class Cube {
     temp.push(this.faces[0].getRow(0));
     temp.push(this.faces[1].getCol(0));
 
-    this.faces[3].setCol(2, temp[0].reverse());
+    this.faces[3].setCol(2, MathHelper.flipVector(temp[0]));
     this.faces[0].setRow(0, temp[1]);
-    this.faces[1].setCol(0, temp[2].reverse());
+    this.faces[1].setCol(0, MathHelper.flipVector(temp[2]));
     this.faces[4].setRow(2, temp[3]);
 
     this.faces[5].rotateCW();
@@ -185,10 +194,10 @@ class Cube {
     temp.push(this.faces[2].getRow(0));
     temp.push(this.faces[1].getRow(0));
 
-    this.faces[3].setRow(0, temp[0].reverse());
+    this.faces[3].setRow(0, MathHelper.flipVector(temp[0]));
     this.faces[2].setRow(0, temp[1]);
     this.faces[1].setRow(0, temp[2]);
-    this.faces[5].setRow(2, temp[3].reverse());
+    this.faces[5].setRow(2, MathHelper.flipVector(temp[3]));
 
     this.faces[0].rotateCW();
   }
@@ -252,37 +261,44 @@ class Cube {
 
   printF() {
     console.log('Printing F Layer');
-    this.faces[4].rows.map(x => console.log(x));
+    // this.faces[4].rows.map(x => console.log(x));
+    printMatrix(this.faces[4].data);
   }
 
   printB() {
     console.log('Printing B Layer');
-    this.faces[0].rows.map(x => console.log(x));
+    // this.faces[0].rows.map(x => console.log(x));
+    printMatrix(this.faces[0].data);
   }
 
   printL() {
     console.log('Printing L Layer');
-    this.faces[1].rows.map(x => console.log(x));
+    // this.faces[1].rows.map(x => console.log(x));
+    printMatrix(this.faces[1].data);
   }
 
   printU() {
     console.log('Printing U Layer');
-    this.faces[2].rows.map(x => console.log(x));
+    // this.faces[2].rows.map(x => console.log(x));
+    printMatrix(this.faces[2].data);
   }
 
   printR() {
     console.log('Printing R Layer');
-    this.faces[3].rows.map(x => console.log(x));
+    // this.faces[3].rows.map(x => console.log(x));
+    printMatrix(this.faces[3].data);
   }
 
   printF() {
     console.log('Printing F Layer');
-    this.faces[4].rows.map(x => console.log(x));
+    // this.faces[4].rows.map(x => console.log(x));
+    printMatrix(this.faces[4].data);
   }
 
   printD() {
     console.log('Printing D Layer');
-    this.faces[5].rows.map(x => console.log(x));
+    // this.faces[5].rows.map(x => console.log(x));
+    printMatrix(this.faces[5].data);
   }
 
   printCube() {
@@ -362,7 +378,7 @@ function parseTurn(move) {
       cube.turnR();
       break;
     case 'R':
-      cube.turnD();
+      cube.turnR();
       break;
   }
   console.log('Turn ', move);
