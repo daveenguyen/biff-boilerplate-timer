@@ -39,8 +39,6 @@ function calcAverage(solves) {
 
   avg = (sum / data.size / 1e3).toFixed(3);
 
-  console.log('average of', solves.size, 'best:', best, 'worst:', worst, 'avg:', avg)
-
   return avg;
 }
 

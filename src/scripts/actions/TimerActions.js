@@ -26,35 +26,10 @@ const TimerActions = biff.createActions({
       data: data
     });
   },
-  tick(data) {
+  tick() {
     this.dispatch({
-      actionType: 'TICK',
-      data: data
+      actionType: 'TICK'
     });
-  },
-  addTodo(todo) {
-
-    var self = this;
-
-    this.dispatch({
-      actionType: 'ADD_TODO_START'
-    });
-
-    // Simulate Async Call
-    setTimeout(function() {
-
-      if (todo !== '') {
-        self.dispatch({
-          actionType: 'ADD_TODO_SUCCESS',
-          data: todo
-        });
-      } else {
-        self.dispatch({
-          actionType: 'ADD_TODO_ERROR'
-        })
-      }
-
-    }, 600);
   }
 });
 

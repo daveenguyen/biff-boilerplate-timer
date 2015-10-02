@@ -27,8 +27,6 @@ function printMatrix(value) {
     str = str.replace(re, color[i]);
   }
   str = str.replace(/],/g, '],\n');
-
-  console.log(str);
 }
 
 class MathHelper {
@@ -381,23 +379,29 @@ function parseTurn(move) {
       cube.turnR();
       break;
   }
-  console.log('Turn ', move);
 }
 
 function parseScramble(scramble) {
   let list = scramble.split(' ');
   cube.resetCube();
 
-  console.log(scramble);
   list.map(x => parseTurn(x));
-  cube.printCube();
+}
+
+let curScramble;
+
+function guardedParsing(scramble) {
+  if (curScramble !== scramble) {
+    curScramble = scramble;
+    parseScramble(curScramble);
+  }
 }
 
 class CubeViewer extends React.Component {
   render() {
     return (
       <div>
-        {parseScramble(this.props.scramble)}
+        {guardedParsing(this.props.scramble)}
       </div>
     );
   }

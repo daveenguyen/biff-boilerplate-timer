@@ -48,9 +48,11 @@ var styles = {
   }
 }
 
+let data;
+
 function wrapData(f) {
   return function(e) {
-    let data = {
+    data = {
       time: Date.now(),
       scramble: ScrambleStore.getScramble(),
       solveTime: TimeStore.getTime()

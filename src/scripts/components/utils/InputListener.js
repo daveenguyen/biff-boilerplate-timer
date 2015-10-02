@@ -7,7 +7,7 @@ let _ticker;
 
 function startInspection() {
   TimerActions.startInspection();
-  _ticker = setInterval(TimerActions.tick, 50);
+  _ticker = setInterval(TimerActions.tick, 100);
 }
 
 function newSolve() {
@@ -16,7 +16,7 @@ function newSolve() {
 
 function startSolve(data) {
   TimerActions.startSolve(data);
-  _ticker = setInterval(TimerActions.tick, 50);
+  _ticker = setInterval(TimerActions.tick, 100);
 }
 
 function endSolve(data) {
